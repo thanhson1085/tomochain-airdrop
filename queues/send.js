@@ -1,14 +1,16 @@
 const logger = require('../helpers/logger')
 const db = require('../models/mongodb')
-const web3 = require('../models/blockchain')
+const web3 = require('../models/blockchain/web3')
+const config = require('config')
 
+var nonce = 0
 const consumer = {}
 consumer.name = 'send'
 consumer.processNumber = 1
 consumer.task = async function (job, done) {
     try {
         let { to } = job.data
-		let nonce = await web3.eth.getTransactionCount(web3.eth.defaultAccount)
+		nonce = (nonce) ? nonce + 1 : await web3.eth.getTransactionCount(web3.eth.defaultAccount)
         let user = await db.User.findOne({ address: to })
         if (!user) {
             await send({
@@ -32,7 +34,7 @@ consumer.task = async function (job, done) {
 
 const send = function (obj) {
     return new Promise((resolve, reject) => {
-        web3Rpc.eth.sendTransaction(obj, function (err, hash) {
+        web3.eth.sendTransaction(obj, function (err, hash) {
             if (err) {
                 logger.error(`Send error ${obj.to} nonce ${obj.nonce}`)
                 logger.error(String(err))
@@ -43,7 +45,7 @@ const send = function (obj) {
             } else {
                 logger.info('Done %s %s %s %s %s', obj.to, obj.value, hash, 'nonce', obj.nonce)
                 return db.User.create({
-                    address: obj.address,
+                    address: obj.to,
                     tx: hash,
                     status: 'SENT'
                 }).then(() => {
