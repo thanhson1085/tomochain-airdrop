@@ -19,6 +19,14 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(validator({}))
 
+// app secret 
+app.use((req, res, next) => {
+    if (req.headers.authorization !== config.get('appSecret')) {
+        return res.status(403).send('Access denied!!!')
+    }
+    return next()
+})
+
 // apis
 app.use(require('./apis'))
 

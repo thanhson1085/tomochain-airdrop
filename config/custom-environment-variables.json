@@ -14,5 +14,6 @@
   "redis": {
     "host": "REDIS_HOST"
   },
-  "privateKey": "PRIVATE_KEY"
+  "privateKey": "PRIVATE_KEY",
+  "appSecret": "APP_SECRET"
 }

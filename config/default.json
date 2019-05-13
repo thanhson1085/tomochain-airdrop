@@ -1,6 +1,7 @@
 {
     "airdrop": "10000000000000000000",
     "privateKey": "xxx",
+    "appSecret": "xxx",
     "server": {
         "host": "0.0.0.0",
         "port": 3000
