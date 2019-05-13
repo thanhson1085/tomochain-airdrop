@@ -11,11 +11,11 @@ var User = new Schema({
     },
     amount: String,
     amountNumber: { type: Number, index: true },
-    tx: { type: String, index true},
+    tx: { type: String, index: true},
     blockNumber: { type: Number, index: true },
     status: {
         type: String,
-        enum: ['SENT', 'ERRORED', 'SENDING']
+        enum: ['SENT', 'ERRORED', 'SENDING'],
         index: true
     }
 }, { timestamps: true })
