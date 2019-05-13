@@ -10,12 +10,11 @@ module.exports = function (err, req, res, next) {
 
         if (parseInt(err.status) !== 401 && parseInt(err.status) !== 403) {
             logger.warn(err)
-            console.trace(err)
         }
 
         return res.status(err.status).json({
             status: err.status,
-            error: { message: err.message }
+            message: err.message
         })
     }
     return next()

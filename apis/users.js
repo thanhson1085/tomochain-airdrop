@@ -6,8 +6,12 @@ const config = require('config')
 const logger = require('../helpers/logger')
 const q = require('../queues')
 const { check, validationResult, query } = require('express-validator/check')
+const web3 = require('../models/blockchain/web3')
 
 router.get('/:address/status', [
+    check('address', 'Address is invalid')
+    .exists()
+    .custom((value, { req }) => web3.utils.isAddress(value))
 ], async function (req, res, next) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -24,6 +28,9 @@ router.get('/:address/status', [
 })
 
 router.post('/:address/airdrop', [
+    check('address', 'Address is invalid')
+    .exists()
+    .custom((value, { req }) => web3.utils.isAddress(value))
 ], async function (req, res, next) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
