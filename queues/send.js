@@ -11,6 +11,7 @@ consumer.task = async function (job, done) {
     try {
         let { to } = job.data
 		let n = consumer.nonce || await web3.eth.getTransactionCount(web3.eth.defaultAccount)
+        logger.info('Process send to %s attempts %s nonce %s', to, job.toJSON().attempts.made, n)
         let user = await db.User.findOne({ address: to })
         if (!user) {
             await send({
@@ -21,11 +22,12 @@ consumer.task = async function (job, done) {
                 gasLimit: 21000,
                 gasPrice: 250000000,
                 chainId: config.get('blockchain.networkId')
+            }).then(() => {
+                consumer.nonce = (consumer.nonce || n) + 1
             })
         } else {
             logger.info('User %s already processed airdrop', to)
         }
-        consumer.nonce = (consumer.nonce || n) + 1
         return done()
     } catch (e) {
         logger.error('Send TOMO error %s', e)
@@ -50,7 +52,7 @@ const send = function (obj) {
                     return resolve()
                 })
             }
-        }).catch(e => { logger.error(e) })
+        }).catch(e => { logger.error(e); reject(e) })
     })
 }
 

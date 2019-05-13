@@ -17,7 +17,7 @@ router.get('/:address/status', [
     try {
         let address = (req.params.address || '').toLowerCase()
         let user = await db.User.findOne({ address: address })
-        return res.json(user)
+        return res.json(user || {})
     } catch (e) {
         return next(e)
     }
